@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GenAI Resume Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>GenAI Resume Analyzer</h1>
+        <p>Analyze your resume against a job description and prepare for interviews.</p>
+    </header>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert">
+          {% for message in messages %}
+            <p>{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <section class="card">
+        <form method="POST" enctype="multipart/form-data">
+            <label for="resume">Upload Resume (PDF)</label>
+            <input id="resume" name="resume" type="file" accept=".pdf" required>
+
+            <label for="job_description">Job Description</label>
+            <textarea id="job_description" name="job_description"
+                      placeholder="Paste the complete job description here..." required></textarea>
+
+            <button type="submit">Analyze Resume</button>
+        </form>
+    </section>
+
+    {% if result %}
+    <section class="results">
+        <div class="score card">
+            <h2>ATS-Style Match Score</h2>
+            <div class="score-number">{{ result.match_score }}%</div>
+            <p>{{ result.summary }}</p>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Matching Skills</h2>
+                <ul>
+                    {% for item in result.matching_skills %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Missing Skills</h2>
+                <ul>
+                    {% for item in result.missing_skills %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Strengths</h2>
+                <ul>
+                    {% for item in result.strengths %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>Improvements</h2>
+                <ul>
+                    {% for item in result.improvements %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Interview Questions</h2>
+            <ol>
+                {% for item in result.interview_questions %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>Improved Professional Summary</h2>
+            <p class="summary">{{ result.improved_summary }}</p>
+        </div>
+    </section>
+    {% endif %}
+
+    <footer>
+        <p>GenAI project for educational and career-preparation purposes.</p>
+    </footer>
+</div>
+</body>
+</html>
